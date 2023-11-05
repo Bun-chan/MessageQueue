@@ -348,7 +348,7 @@ static int read_frame(void)
                         errno_exit("VIDIOC_DQBUF");
                 }
             }
-
+	    printf("n_buffers %d, buf.index %d\n", n_buffers, buf.index);
             assert(buf.index < n_buffers);
 
             process_image(buffers[buf.index].start, buf.bytesused);
@@ -612,6 +612,7 @@ static void init_mmap(void)
 
         for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
                 struct v4l2_buffer buf;
+		printf("n_buffers %d\n", n_buffers);
 
                 CLEAR(buf);
 
