@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
+#include <syslog.h>
 #include <getopt.h>             /* getopt_long() */
 
 #include <fcntl.h>              /* low-level i/o */
@@ -348,7 +348,6 @@ static int read_frame(void)
                         errno_exit("VIDIOC_DQBUF");
                 }
             }
-	    printf("n_buffers %d, buf.index %d\n", n_buffers, buf.index);
             assert(buf.index < n_buffers);
 
             process_image(buffers[buf.index].start, buf.bytesused);
@@ -612,7 +611,6 @@ static void init_mmap(void)
 
         for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
                 struct v4l2_buffer buf;
-		printf("n_buffers %d\n", n_buffers);
 
                 CLEAR(buf);
 
@@ -693,7 +691,10 @@ static void init_device(void)
                 errno_exit("VIDIOC_QUERYCAP");
         }
     }
-
+    syslog(LOG_CRIT, "[COURSE:3][ASSIGNMENT:1] cap.bus_info: %s\n", cap.bus_info); 
+    syslog(LOG_CRIT, "[COURSE:3][ASSIGNMENT:1] cap.driver: %s\n", cap.driver); 
+    syslog(LOG_CRIT, "[COURSE:3][ASSIGNMENT:1] cap.capabilities: 0x%X\n", cap.capabilities); 
+    syslog(LOG_CRIT, "[COURSE:3][ASSIGNMENT:1] cap.card: %s\n", cap.card); 
     if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
     {
         fprintf(stderr, "%s is no video capture device\n",
@@ -843,7 +844,7 @@ static void open_device(void)
         }
 
         fd = open(dev_name, O_RDWR /* required */ | O_NONBLOCK, 0);
-
+	printf("fd %d\n");
         if (-1 == fd) {
                 fprintf(stderr, "Cannot open '%s': %d, %s\n",
                          dev_name, errno, strerror(errno));
@@ -898,6 +899,7 @@ int main(int argc, char **argv)
 
         c = getopt_long(argc, argv,
                     short_options, long_options, &idx);
+        syslog(LOG_CRIT, "[COURSE:3][ASSIGNMENT:1] getopt_long(): %d\n", c); 
 
         if (-1 == c)
             break;
