@@ -491,7 +491,7 @@ static void start_capturing(void)
         case IO_METHOD_MMAP:
                 for (i = 0; i < n_buffers; ++i) 
                 {
-                        printf("allocated buffer %d\n", i);
+    			syslog(LOG_CRIT, "[COURSE:3][ASSIGNMENT:1] allocated buffer %d\n", i);
                         struct v4l2_buffer buf;
 
                         CLEAR(buf);
